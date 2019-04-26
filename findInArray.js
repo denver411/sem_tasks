@@ -1,44 +1,42 @@
-'use strict'
+"use strict";
 
 const arr = [];
 const sortArr = [];
 
 for (let i = 0; i < 30; i++) {
-  arr.push(Math.floor(Math.random() * 100));
-  sortArr.push(Math.floor(Math.random() * 100));
+  arr.push(Math.floor(Math.random() * 30));
+  sortArr.push(Math.floor(Math.random() * 30));
 }
 
-sortArr.sort((a,b) => a - b);
+sortArr.sort((a, b) => a - b);
 
-const findInSortArray = (arr, num) => {
-  const array = [...arr];
+const findInSortArray = (arr = [], num) => {
   let start = 0;
-  let end = array.length - 1;
-  let middle = 0;
+  let end = arr.length - 1;
 
-  while (start < end) {
-    middle = Math.floor(start + (end - start) / 2);
+  if (arr[start] > num || arr[end] < num || !arr.length) return -1;
 
-    if(array[middle] === num) return middle;
-    if(array[middle] > num) {
+  while (start <= end) {
+    const middle = Math.floor((start + end) / 2);
+
+    if (arr[middle] === num) return middle;
+    if (arr[middle] > num) {
       end = middle - 1;
     } else {
       start = middle + 1;
     }
   }
 
-  if(array[start] === num) return start;
-  if(array[end] === num) return end;
-
   return -1;
-}
+};
 
 const findInArray = (arr, num) => {
-  const array = [...arr];
-  
-  for (let i = 0, l = array.length; i < l; i++) {
-    if(array[i] === num) return i;
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] === num) return i;
   }
-  
+
   return -1;
-}
+};
+
+console.log(findInSortArray(sortArr, 0) >= 0 === sortArr.includes(0));
+console.log(findInArray(arr, 10) >= 0 === arr.includes(10));
