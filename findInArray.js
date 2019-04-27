@@ -1,5 +1,7 @@
 "use strict";
 
+// поиск в массиве
+
 const arr = [];
 const sortArr = [];
 
@@ -14,7 +16,7 @@ const findInSortArray = (arr = [], num) => {
   let start = 0;
   let end = arr.length - 1;
 
-  if (arr[start] > num || arr[end] < num || !arr.length) return -1;
+  if (!num || arr[start] > num || arr[end] < num || !arr.length) return -1;
 
   while (start <= end) {
     const middle = Math.floor((start + end) / 2);
