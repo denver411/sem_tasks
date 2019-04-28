@@ -12,29 +12,31 @@ for (let i = 0; i < 19; i++) {
 
 sortArr.sort((a, b) => a - b);
 
-const findInSortArray = (arr, num, idx = 0) => {
-  if (!num || arr[0] > num || arr[arr.length - 1] < num || !arr.length) return -1;
-  if (arr.length === 1) return arr[0] === num ? idx : -1;
-  
-  const middle = Math.floor((0 + arr.length - 1) / 2);
-  
-  if (arr[middle] === num) return idx + middle;
-  if (arr[middle] > num) {
-    return findInSortArray(arr.slice(0, middle + 1), num, idx);
-  } else {
-    return findInSortArray(arr.slice(middle + 1), num, idx + middle + 1);
-  }
+const findInSortArray = (array, number) => {
+  const fn = (arr, num, start, end) => {
+    if (start > end) return -1;
+
+    const middle = Math.floor((start + end) / 2);
+
+    if (arr[middle] === num) return middle;
+    arr[middle] > num ? (end = middle - 1) : (start = middle + 1);
+
+    return fn(arr, num, start, end);
+  };
+
+  return fn(array, number, 0, array.length - 1);
 };
 
-const findInArray = (arr, num, idx = 0) => {
-  if (idx >= arr.length) {
-    return -1;
-  } else {
+const findInArray = (array, number) => {
+  const fn = (arr, num, idx = 0) => {
+    if (arr[idx] == null) return -1;
     if (arr[idx] === num) return idx;
-    return findInArray(arr, num, ++idx);
-  }
-};
 
+    return fn(arr, num, ++idx);
+  };
+
+  return fn(array, number);
+};
 
 console.log(findInSortArray(sortArr, 10), sortArr);
-console.log(findInArray(arr, 10) === arr.indexOf(10));
+console.log(findInArray(arr, 10), arr);
