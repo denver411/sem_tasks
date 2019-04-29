@@ -8,21 +8,19 @@ for (let i = 0; i < 19; i++) {
   arr.push(Math.floor(Math.random() * 30));
 }
 
-const arraySum_tco = (array) => {
-  const fn = ([el, ...arr], acc) => {
-    if (el == null) return acc;
-  
-    return fn(arr, el + acc);
+const getSum_tco = array => {
+  const fn = ([x, ...xs], acc) => {
+    if (x == null) return acc;
+
+    return fn(xs, x + acc);
   };
 
   return fn(array, 0);
 };
 
-const arraySum = ([el, ...arr]) => {
-  if (el == null) return 0;
-
-  return el + arraySum(arr);
+const getSum = ([x, ...xs]) => {
+  return x == null ? 0 : x + getSum(xs);
 };
 
-console.log(arraySum_tco(arr) === arr.reduce((acc, cur) => acc + cur, 0));
-console.log(arraySum(arr) === arr.reduce((acc, cur) => acc + cur, 0));
+console.log(getSum_tco(arr) === arr.reduce((acc, cur) => acc + cur, 0));
+console.log(getSum(arr) === arr.reduce((acc, cur) => acc + cur, 0));
