@@ -1,20 +1,12 @@
-'use strict';
+"use strict";
 
 // реализация функции filter
-
-const arr = [];
-
-for (let i = 0; i < 10; i++) {
-  arr.push(Math.floor(Math.random() * 10));
-}
-
 // цикл
 const newFilter = (fn, arr) => {
   const newArr = [];
 
   for (let i = 0; i < arr.length; i++) {
-    const condition = fn(arr[i], i, arr);
-    if (condition) {
+    if (fn(arr[i])) {
       newArr.push(arr[i]);
     }
   }
@@ -23,37 +15,40 @@ const newFilter = (fn, arr) => {
 };
 
 // рекурсия
-const newFilterRec = (fn, arr) => {
-  const f = (fn, [x, ...xs]) => {
-    if (x == null) {
-      return [];
-    }
+const newFilterRec = (fn, [x, ...xs]) => {
+  if (x == null) {
+    return [];
+  }
 
-    const condition = fn(x, arr.length - xs.length, arr);
-
-    return condition ? [x].concat(f(fn, xs)) : f(fn, xs);
-  };
-
-  return f(fn, arr, []);
+  return fn(x) ? [x, ...newFilterRec(fn, xs)] : newFilterRec(fn, xs);
 };
 
 // рекурсия хвостовая
 const newFilterRecTail = (fn, arr) => {
-  const f = (fn, [x, ...xs], newArr) => {
+  const f = (fn, [x, ...xs], acc) => {
     if (x == null) {
-      return newArr;
+      return acc;
     }
 
-    if (fn(x, newArr.length, arr)) {
-      newArr.push(x);
-    }
+    acc = fn(x) ? [...acc, x] : acc;
 
-    return f(fn, xs, newArr);
+    return f(fn, xs, acc);
   };
 
   return f(fn, arr, []);
 };
+//тесты
+const generateArr = (length = 10, max = 10) => {
+  const arr = [];
 
+  for (let i = 0; i < length; i++) {
+    arr.push(Math.floor(Math.random() * max));
+  }
+
+  return arr;
+};
+
+const arr = generateArr();
 console.log(arr);
 console.log(newFilter(el => el > 2, arr));
 console.log(newFilterRec(el => el > 2, arr));

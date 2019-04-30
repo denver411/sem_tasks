@@ -1,17 +1,6 @@
 "use strict";
 
 // поиск в массиве через рекурсию
-
-const arr = [];
-const sortArr = [];
-
-for (let i = 0; i < 19; i++) {
-  arr.push(Math.floor(Math.random() * 30));
-  sortArr.push(Math.floor(Math.random() * 30));
-}
-
-sortArr.sort((a, b) => a - b);
-
 const findInSortArray = (array, number) => {
   const fn = (arr, num, start, end) => {
     if (start > end) return -1;
@@ -38,5 +27,20 @@ const findInArray = (array, number) => {
   return fn(array, number);
 };
 
-console.log(findInSortArray(sortArr, 10), sortArr);
-console.log(findInArray(arr, 10), arr);
+//тесты
+const generateArr = (length = 10, max = 10) => {
+  const arr = [];
+
+  for (let i = 0; i < length; i++) {
+    arr.push(Math.floor(Math.random() * max));
+  }
+
+  return arr;
+};
+
+
+const arr = generateArr(10, 10);
+const sortArr = generateArr(10, 10).sort((a, b) => a - b);
+
+console.log(findInSortArray(sortArr, 5), sortArr);
+console.log(findInArray(arr, 5), arr);
