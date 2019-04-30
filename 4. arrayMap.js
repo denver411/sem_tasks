@@ -1,48 +1,48 @@
-'use strict'
+"use strict";
 
 // реализация функции map
-
-const arr = [];
-
-for (let i = 0; i < 10; i++) {
-  arr.push(Math.floor(Math.random() * 10));
-}
-
 // цикл
 const newMap = (fn, arr) => {
   const newArr = [];
 
   for (let i = 0; i < arr.length; i++) {
-    newArr.push(fn(arr[i], i, arr));
+    newArr.push(fn(arr[i]));
   }
 
   return newArr;
 };
 
 // рекурсия
-const newMapRec = (fn, arr) => {
-  const f = (fn, [x, ...xs]) => {
-    if (x == null) {
-      return [];
-    }
-
-    return [fn(x, arr.length - xs.length - 1, arr)].concat(f(fn, xs));
-  }
-
-  return f(fn, arr, [])
+const newMapRec = (fn, [x, ...xs]) => {
+  return x == null ? [] : [fn(x), ...newMapRec(fn, xs)];
 };
 
 // рекурсия хвостовая
 const newMapRecTail = (fn, arr) => {
-  const f = (fn, [x, ...xs], newArr) => {
+  const f = (fn, [x, ...xs], acc) => {
     if (x == null) {
-      return newArr;
+      return acc;
     }
 
-    return f(fn, xs, [...newArr, fn(x, newArr.length, arr)]);
-  }
+    return f(fn, xs, [...acc, fn(x)]);
+  };
 
-  return f(fn, arr, [])
+  return f(fn, arr, []);
 };
 
-console.log(newMapRecTail(el => el * 2, [2,2,2,2,2]));
+//тесты
+const generateArr = (length = 10, max = 10) => {
+  const arr = [];
+
+  for (let i = 0; i < length; i++) {
+    arr.push(Math.floor(Math.random() * max));
+  }
+
+  return arr;
+};
+
+const arr = generateArr();
+console.log(arr);
+console.log(newMap(el => el * 2, arr));
+console.log(newMapRec(el => el * 2, arr));
+console.log(newMapRecTail(el => el * 2, arr));
