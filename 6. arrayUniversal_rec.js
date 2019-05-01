@@ -1,40 +1,21 @@
 'use strict';
 
 // рекурсия
-const uniFn = ([x, ...xs], fn) => {
-  if (x == null) {
-    return fn ? [] : 0;
-  }
-  if (fn && typeof fn === 'function') {
-    if (typeof fn(x) === 'boolean') {
-      return fn(x) ? [x, ...uniFn(xs, fn)] : uniFn(xs, fn);
-    }
-    return [fn(x), ...uniFn(xs, fn)];
-  }
-
-  return x + uniFn(xs);
+const uniFn = ([x, ...xs], fn, initial) => {
+  return x == null ? initial : uniFn(xs, fn, fn(x, initial));
 };
 
 // рекурсия хвостовая
-const uniFnTail = (arr, fn) => {
-  const f = ([x, ...xs], fn, acc) => {
+const uniFnTail = (arr, fn, initial) => {
+  const f = ([x, ...xs], acc) => {
     if (x == null) {
       return acc;
     }
 
-    if (fn && typeof fn === 'function') {
-      if (typeof fn(x) === 'boolean') {
-        acc = fn(x) ? [...acc, x] : acc;
-        return f(xs, fn, acc);
-      }
-      return f(xs, fn, [...acc, fn(x)]);
-    }
-
-    return f(xs, null, x + acc);
+    return f(xs, fn(x, acc));
   };
-  const initial = fn ? [] : 0;
 
-  return f(arr, fn, initial);
+  return f(arr, initial);
 };
 
 //тесты
@@ -50,5 +31,25 @@ const generateArr = (length = 10, max = 10) => {
 
 const arr = generateArr();
 console.log(arr);
-console.log(uniFn(arr));
-console.log(uniFnTail(arr));
+console.log(
+  uniFn(
+    arr,
+    (el, acc) => {
+      return el > 5 ? [...acc, el] : acc;
+    },
+    []
+  )
+);
+console.log(uniFn(arr, (el, acc) => [...acc, el * 2], []));
+console.log(uniFn(arr, (el, acc) => el + acc, 0));
+console.log(
+  uniFnTail(
+    arr,
+    (el, acc) => {
+      return el > 5 ? [...acc, el] : acc;
+    },
+    []
+  )
+);
+console.log(uniFnTail(arr, (el, acc) => [...acc, el * 2], []));
+console.log(uniFnTail(arr, (el, acc) => el + acc, 0));
