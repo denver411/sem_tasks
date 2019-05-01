@@ -39,8 +39,8 @@ const generateArr = (length = 10, max = 10) => {
 };
 
 
-const arr = generateArr(10, 10);
-const sortArr = generateArr(10, 10).sort((a, b) => a - b);
+const arr = generateArr();
+const sortArr = generateArr().sort((a, b) => a - b);
 
 console.log(findInSortArray(sortArr, 5), sortArr);
 console.log(findInArray(arr, 5), arr);
