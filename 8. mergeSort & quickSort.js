@@ -1,30 +1,65 @@
 'use strict';
+// функция reduce
+const reduce = ([x, ...xs], fn, initial) => {
+  return x == null ? initial : reduce(xs, fn, fn(x, initial));
+};
 
 // сортировка слиянием
 const mergeSort = arr => {
-  if (arr.length <= 1) return arr;
+  const merge = ([x1, ...xs1], [x2, ...xs2]) => {
+    if (x1 == null) return [x2, ...xs2];
+    if (x2 == null) return [x1, ...xs1];
 
-  const f = ([x1, ...xs1], [x2, ...xs2], acc) => {
-    if (x1 == null || x2 == null) {
-      return [...acc, ...(x1 == null ? [x2, ...xs2] : [x1, ...xs1])];
-    }
-
-    return x1 <= x2
-      ? f(xs1, [x2, ...xs2], [...acc, x1])
-      : f([x1, ...xs1], xs2, [...acc, x2]);
+    return x1 < x2
+      ? [x1, ...merge(xs1, [x2, ...xs2])]
+      : [x2, ...merge(xs2, [x1, ...xs1])];
   };
-  const middle = Math.floor(arr.length / 2);
 
-  return f(mergeSort(arr.slice(0, middle)), mergeSort(arr.slice(middle)), []);
+  const sort = arr => {
+    if (arr.length <= 1) return arr;
+
+    const m = Math.floor(arr.length / 2);
+    let idx = 0;
+
+    const halfArr = reduce(
+      arr,
+      (el,  acc) => {
+        if (idx++ < m) {
+          acc.left.push(el);
+          return acc;
+        } else {
+          acc.right.push(el);
+          return acc;
+        }
+      },
+      { left: [], right: [] }
+    );
+
+    return merge(sort(halfArr.left), sort(halfArr.right));
+  };
+
+  return sort(arr);
 };
 
 // быстрая сортировка
 const quickSort = ([x, ...xs]) => {
   if (x == null) return [];
-  const less = xs.filter(el => el <= x);
-  const more = xs.filter(el => el > x);
+  if (xs.length === 0) return [x];
+  const halfArr = reduce(
+    xs,
+    (el, acc) => {
+      if (el < x) {
+        acc.less.push(el);
+        return acc;
+      } else {
+        acc.more.push(el);
+        return acc;
+      }
+    },
+    { less: [], more: [] }
+  );
 
-  return [...quickSort(less), x, ...quickSort(more)];
+  return [...quickSort(halfArr.less), x, ...quickSort(halfArr.more)];
 };
 
 //тесты
