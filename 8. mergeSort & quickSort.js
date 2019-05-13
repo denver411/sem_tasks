@@ -4,6 +4,8 @@ const reduce = ([x, ...xs], fn, initial) => {
   return x == null ? initial : reduce(xs, fn, fn(x, initial));
 };
 
+const partition = (arr, fn) => reduce(arr, fn, [[], []]);
+
 // сортировка слиянием
 const mergeSort = arr => {
   const merge = ([x1, ...xs1], [x2, ...xs2]) => {
@@ -21,21 +23,11 @@ const mergeSort = arr => {
     const m = Math.floor(arr.length / 2);
     let idx = 0;
 
-    const halfArr = reduce(
-      arr,
-      (el,  acc) => {
-        if (idx++ < m) {
-          acc.left.push(el);
-          return acc;
-        } else {
-          acc.right.push(el);
-          return acc;
-        }
-      },
-      { left: [], right: [] }
+    const [left, right] = partition(arr, (el, acc) =>
+      idx++ < m ? [[el, ...acc[0]], acc[1]] : [acc[0], [el, ...acc[1]]]
     );
 
-    return merge(sort(halfArr.left), sort(halfArr.right));
+    return merge(sort(left), sort(right));
   };
 
   return sort(arr);
@@ -45,21 +37,11 @@ const mergeSort = arr => {
 const quickSort = ([x, ...xs]) => {
   if (x == null) return [];
   if (xs.length === 0) return [x];
-  const halfArr = reduce(
-    xs,
-    (el, acc) => {
-      if (el < x) {
-        acc.less.push(el);
-        return acc;
-      } else {
-        acc.more.push(el);
-        return acc;
-      }
-    },
-    { less: [], more: [] }
+  const [less, more] = partition(xs, (el, acc) =>
+    el < x ? [[el, ...acc[0]], acc[1]] : [acc[0], [el, ...acc[1]]]
   );
 
-  return [...quickSort(halfArr.less), x, ...quickSort(halfArr.more)];
+  return [...quickSort(less), x, ...quickSort(more)];
 };
 
 //тесты
