@@ -1,5 +1,13 @@
 'use strict';
 
+const filter = (fn, [x, ...xs]) => {
+  if (x == null) {
+    return [];
+  }
+
+  return fn(x) ? [x, ...filter(fn, xs)] : filter(fn, xs);
+};
+
 const split = (divider, str) => {
   if (!divider || !str) return;
   if (divider === '') return [...str];
@@ -13,6 +21,26 @@ const split = (divider, str) => {
   return f(str, '');
 };
 
-const str = 'one two three';
+const moreThenFiveLetters = el => el.length > 5;
 
-console.log(split(' ', str));
+const getCount = arr => arr.length;
+
+const compose = (
+  getCount,
+  filter,
+  moreThenFiveLetters,
+  split,
+  divider
+) => str => getCount(filter(moreThenFiveLetters, split(divider, str)));
+
+const final = compose(
+  getCount,
+  filter,
+  moreThenFiveLetters,
+  split,
+  ' '
+);
+
+const str = 'one two three morethenfiveletters onemorelongword';
+
+console.log(final(str));

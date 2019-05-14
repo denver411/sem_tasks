@@ -1,18 +1,23 @@
 'use strict';
-// функция reduce
-const reduce = ([x, ...xs], fn, initial) => {
-  return x == null ? initial : reduce(xs, fn, fn(x, initial));
-};
 
-const partition = (arr, fn) => {
-
-};
+const partition = fn => arr =>
+  arr.reduce(
+    ([l, r], el, idx, arr) => {
+      return fn(el, idx, arr) ? [[el, ...l], r] : [l, [el, ...r]];
+    },
+    [[], []]
+  );
 
 // сортировка слиянием
+const halve = partition((el, idx, arr) => idx < arr.length / 2);
+
 const mergeSort = arr => {
-  const merge = ([x1, ...xs1], [x2, ...xs2]) => {
-    if (x1 == null) return [x2, ...xs2];
-    if (x2 == null) return [x1, ...xs1];
+  const merge = (arr1, arr2) => {
+    if (!arr1.length) return arr2;
+    if (!arr2.length) return arr1;
+
+    const [x1, ...xs1] = arr1;
+    const [x2, ...xs2] = arr2;
 
     return x1 < x2
       ? [x1, ...merge(xs1, [x2, ...xs2])]
@@ -22,15 +27,7 @@ const mergeSort = arr => {
   const sort = arr => {
     if (arr.length <= 1) return arr;
 
-    const m = Math.floor(arr.length / 2);
-    let idx = 0;
-
-    const [left, right] = reduce(
-      arr,
-      (el, acc) =>
-        idx++ < m ? [[el, ...acc[0]], acc[1]] : [acc[0], [el, ...acc[1]]],
-      [[], []]
-    );
+    const [left, right] = halve(arr);
 
     return merge(sort(left), sort(right));
   };
@@ -39,15 +36,12 @@ const mergeSort = arr => {
 };
 
 // быстрая сортировка
+
 const quickSort = ([x, ...xs]) => {
   if (x == null) return [];
   if (xs.length === 0) return [x];
-  const [less, more] = reduce(
-    xs,
-    (el, acc) =>
-      el < x ? [[el, ...acc[0]], acc[1]] : [acc[0], [el, ...acc[1]]],
-    [[], []]
-  );
+
+  const [less, more] = partition(el => el < x)(xs);
 
   return [...quickSort(less), x, ...quickSort(more)];
 };
