@@ -1,14 +1,20 @@
 'use strict';
 
-const filter = (fn, [x, ...xs]) => {
-  if (x == null) {
-    return [];
-  }
+const filter = fn => arr => {
+  const f = (fn, [x, ...xs]) => {
+    if (x == null) {
+      return [];
+    }
 
-  return fn(x) ? [x, ...filter(fn, xs)] : filter(fn, xs);
+    return fn(x) ? [x, ...f(fn, xs)] : f(fn, xs);
+  };
+
+  return f(fn, arr);
 };
 
-const split = (divider, str) => {
+const filterLongWords = filter(el => el.length > 5);
+
+const split = divider => str => {
   if (!divider || !str) return;
   if (divider === '') return [...str];
 
@@ -21,26 +27,15 @@ const split = (divider, str) => {
   return f(str, '');
 };
 
-const moreThenFiveLetters = el => el.length > 5;
+const splitByGap = split(' ');
 
-const getCount = arr => arr.length;
+const compose = (f1, f2) => arg => f1(f2(arg));
 
-const compose = (
-  getCount,
-  filter,
-  moreThenFiveLetters,
-  split,
-  divider
-) => str => getCount(filter(moreThenFiveLetters, split(divider, str)));
-
-const final = compose(
-  getCount,
-  filter,
-  moreThenFiveLetters,
-  split,
-  ' '
+const resFn = compose(
+  filterLongWords,
+  splitByGap
 );
 
-const str = 'one two three morethenfiveletters onemorelongword';
+const str = 'one  two three morethenfiveletters onemorelongword';
 
-console.log(final(str));
+console.log(splitByGap(str));
