@@ -15,7 +15,7 @@ const filter = fn => arr => {
 const filterLongWords = filter(el => el.length > 5);
 
 const split = divider => str => {
-  if (!divider || !str || (typeof str !== 'string')) return [];
+  if (!divider || !str || typeof str !== 'string') return [];
   if (divider === '') return [...str];
 
   const f = ([x, ...xs], el) => {
@@ -37,6 +37,19 @@ const resFn = compose(
   splitByGap
 );
 
-const str = 'one  two three      morethenfiveletters onemorelongword';
+const str = 'one  two three      morethen  fiveletters onemorelongword';
 
 console.log(resFn(str));
+
+const composeAll = (...args) => {
+  return a => {
+    const f = ([x, ...xs]) => {
+      return xs.length ? x(f(xs)) : x(a);
+    };
+    return f(args);
+  };
+};
+
+const exp = composeAll(filterLongWords, splitByGap);
+
+console.log(exp(str));
