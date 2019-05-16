@@ -30,7 +30,14 @@ const split = divider => str => {
 
 const splitByGap = split(' ');
 
-const compose = (f1, f2) => arg => f1(f2(arg));
+const compose = (...args) => {
+  return a => {
+    const f = ([x, ...xs]) => {
+      return xs.length ? x(f(xs)) : x(a);
+    };
+    return f(args);
+  };
+};
 
 const resFn = compose(
   filterLongWords,
@@ -40,16 +47,3 @@ const resFn = compose(
 const str = 'one  two three      morethen  fiveletters onemorelongword';
 
 console.log(resFn(str));
-
-const composeAll = (...args) => {
-  return a => {
-    const f = ([x, ...xs]) => {
-      return xs.length ? x(f(xs)) : x(a);
-    };
-    return f(args);
-  };
-};
-
-const exp = composeAll(filterLongWords, splitByGap);
-
-console.log(exp(str));
