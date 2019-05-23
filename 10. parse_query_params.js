@@ -35,12 +35,12 @@ const splitToGroups = split('&');
 const splitToKeyValue = split('=');
 const getObject = reduce((el, acc) => {
   const [key, value] = splitToKeyValue(el);
-  return { ...acc, [key]: value };
+  return {...acc, [key]: value};
 }, {});
 
-const parseQueryParams = compose(
+export const parseQueryParams = compose(
   getObject,
-  splitToGroups
+  splitToGroups,
 );
 
 const str = 'key=bdc809aee22230&locator=123456&k=kk778';
