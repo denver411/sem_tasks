@@ -45,4 +45,4 @@ export const parseQueryParams = compose(
 
 const str = 'key=bdc809aee22230&locator=123456&k=kk778';
 
-console.log(parseQueryParams(str));
+// console.log(parseQueryParams(str));

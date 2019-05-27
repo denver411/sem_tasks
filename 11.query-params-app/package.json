@@ -7,8 +7,7 @@
     "start": "webpack-dev-server --mode development",
     "test": "jest",
     "lint": "eslint .",
-    "build": "webpack --mode production",
-    "flow": "flow"
+    "build": "webpack --mode production"
   },
   "author": "",
   "license": "ISC",
@@ -33,6 +32,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
+    "history": "^4.9.0",
     "redux": "^4.0.1"
   }
 }

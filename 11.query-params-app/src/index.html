@@ -4,29 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link src="./css/style.css"
     <title>Document</title>
 </head>
 
 
 <body>
 <div class="container">
-  <ul class="param">
-    <li class="param__item param__item_bool">
+  <form class="param_type_state">
+    <label class="param__item param__item_bool">
      Param 1
-     <label><input type="radio" name="param_1" value="on" >On</label>
-      <label><input type="radio" name="param_1" value="off"checked>Off</label>
-    </li>
-    <li class="param__item param__item_num">
-     Param 2
-     <label><input type="radio" name="param_2" value="on">On</label>
-      <label><input type="radio" name="param_2" value="off"checked>Off</label>
-    </li>
-    <li class="param__item param__item_str">
+      <input name="param_1" type="checkbox"></label>
+    <label class="param__item param__item_str">
+      Param 2
+      <input name="param_2" type="text" ></label>
+    <label class="param__item param__item_num">
      Param 3
-     <label><input type="radio" name="param_3" value="on">On</label>
-      <label><input type="radio" name="param_3" value="off"checked>Off</label>
-    </li>
-  </ul>
+      <input name="param_3" type="number"></label>
+    <button class="update_type_state" type="submit">Apply</button>
+    <button class="reset_type_state" type="reset">Reset</button>
+  </form>
+  <form class="param_type_location">
+    <label class="param__item param__item_bool">
+     Param 1
+      <input name="param_1" type="checkbox"></label>
+    <label class="param__item param__item_str">
+      Param 2
+      <input name="param_2" type="text" ></label>
+    <label class="param__item param__item_num">
+     Param 3
+      <input name="param_3" type="number"></label>
+    <button class="update_type_location" type="submit">Apply</button>
+    <button class="reset_type_location" type="reset">Reset</button>
+  </form>
 </div>
 </body>
 </html>

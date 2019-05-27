@@ -1,45 +1,31 @@
-// @flow
-import store from '../store/initialStore';
+import store, {defaultState} from '../store/initialStore';
+import {createBrowserHistory} from 'history';
+import {parseQueryParams} from '../../../10. parse_query_params';
 
+const history = createBrowserHistory();
 const getState = () => store.getState();
-const renderNodes = state => {
-  document
-    .querySelectorAll('.param__item')
-    .forEach(el => updateNode(el, state));
-  window.history.pushState(
-    null,
-    null,
-    window.location.origin + '/' + getQueryFromState(state),
-  );
-};
 
-const changeHandler = e => {
+const updateStateParam = param => {
   store.dispatch({
-    type: e.target.name.toUpperCase(),
-    param: e.target.value === 'on',
+    type: param.name.toUpperCase(),
+    param: param.type === 'checkbox' ? param.checked : param.value,
   });
-  renderNodes(getState());
 };
 
-const updateNode = (node, state) => {
-  const param = Array.from(node.children).reduce(
-    (acc, el) => ({...acc, [el.children[0].value]: el.children[0]}),
-    {},
+const getInputValuesToState = e => {
+  e.preventDefault();
+  Array.from(e.target.elements)
+    .filter(el => el.tagName === 'INPUT')
+    .forEach(el => updateStateParam(el));
+};
+
+const updateState = state => {
+  Object.entries(state).forEach(([key, value]) =>
+    updateStateParam({name: key, value: value}),
   );
-
-  if (state[param.on.name]) {
-    param.off.checked = false;
-    param.on.checked = true;
-  } else {
-    param.off.checked = true;
-    param.on.checked = false;
-  }
-
-  param.on.addEventListener('change', changeHandler);
-  param.off.addEventListener('change', changeHandler);
 };
 
-const getQueryFromState = params => {
+const getQuery = params => {
   const queryParamsOn = Object.keys(params).filter(el => params[el]);
 
   return queryParamsOn.length
@@ -47,4 +33,40 @@ const getQueryFromState = params => {
     : '';
 };
 
-document.addEventListener('DOMContentLoaded', () => renderNodes(getState()));
+const updateLocation = data => {
+  history.push(getQuery(data));
+};
+
+// state control buttons
+document
+  .querySelector('.param_type_state')
+  .addEventListener('submit', getInputValuesToState);
+
+document
+  .querySelector('.param_type_state')
+  .addEventListener('reset', () => updateState(defaultState));
+
+// location control button
+document.querySelector('.param_type_location').addEventListener('submit', e => {
+  e.preventDefault();
+  const params = Array.from(e.target.elements)
+    .filter(el => el.tagName === 'INPUT')
+    .reduce(
+      (acc, el) => ({
+        ...acc,
+        [el.name]: el.type === 'checkbox' ? el.checked : el.value,
+      }),
+      {},
+    );
+  updateLocation(params);
+});
+
+document.querySelector('.param_type_location').addEventListener('reset', () => {
+  updateLocation(defaultState);
+});
+
+const unsubscribe = store.subscribe(() => updateLocation(getState()));
+const unlisten = history.listen((location, action) => {
+  if (location.search === getQuery(getState())) return;
+  updateState(parseQueryParams(location.search.slice(1)));
+});

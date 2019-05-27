@@ -1,5 +1,3 @@
-// @flow
-
 export default function reducer(state, action) {
   switch (action.type) {
     case 'PARAM_1':
