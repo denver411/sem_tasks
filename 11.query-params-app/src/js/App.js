@@ -1,25 +1,46 @@
-import store, {defaultState} from '../store/initialStore';
 import {createBrowserHistory} from 'history';
+import store, {defaultState} from '../store/initialStore';
+import {updateParam} from '../store/actions';
 import {parseQueryParams} from '../../../10. parse_query_params';
 
 const history = createBrowserHistory();
 const getState = () => store.getState();
 
-const updateStateParam = param => {
-  store.dispatch({
-    type: param.name.toUpperCase(),
-    param: param.type === 'checkbox' ? param.checked : param.value,
-  });
+const getActionName = el => {
+  switch (el.name) {
+    case 'param_1':
+      return 'PARAM_1';
+    case 'param_2':
+      return 'PARAM_2';
+    case 'param_3':
+      return 'PARAM_3';
+    default:
+      return undefined;
+  }
+};
+
+const getInputValue = el => (el.type === 'checkbox' ? el.checked : el.value);
+
+const updateStateParam = el => {
+  store.dispatch(updateParam(getActionName(el), getInputValue(el)));
+};
+
+const checkExistInState = el => {
+  const currentState = getState();
+  const value = el.type === 'checkbox' ? el.checked : el.value;
+
+  return currentState[el.name] == value ? false : true;
 };
 
 const getInputValuesToState = e => {
   e.preventDefault();
-  Array.from(e.target.elements)
+  [...e.target.elements]
     .filter(el => el.tagName === 'INPUT')
-    .forEach(el => updateStateParam(el));
+    .filter(checkExistInState)
+    .forEach(updateStateParam);
 };
 
-const updateState = state => {
+const updateStateFromObject = state => {
   Object.entries(state).forEach(([key, value]) =>
     updateStateParam({name: key, value: value}),
   );
@@ -44,12 +65,12 @@ document
 
 document
   .querySelector('.param_type_state')
-  .addEventListener('reset', () => updateState(defaultState));
+  .addEventListener('reset', () => updateStateFromObject(defaultState));
 
 // location control button
 document.querySelector('.param_type_location').addEventListener('submit', e => {
   e.preventDefault();
-  const params = Array.from(e.target.elements)
+  const formData = [...e.target.elements]
     .filter(el => el.tagName === 'INPUT')
     .reduce(
       (acc, el) => ({
@@ -58,7 +79,7 @@ document.querySelector('.param_type_location').addEventListener('submit', e => {
       }),
       {},
     );
-  updateLocation(params);
+  updateLocation(formData);
 });
 
 document.querySelector('.param_type_location').addEventListener('reset', () => {
@@ -68,5 +89,10 @@ document.querySelector('.param_type_location').addEventListener('reset', () => {
 const unsubscribe = store.subscribe(() => updateLocation(getState()));
 const unlisten = history.listen((location, action) => {
   if (location.search === getQuery(getState())) return;
-  updateState(parseQueryParams(location.search.slice(1)));
+  updateStateFromObject(parseQueryParams(location.search.slice(1)));
+});
+
+document.addEventListener('beforeunload', () => {
+  unsubscribe();
+  unlisten();
 });
